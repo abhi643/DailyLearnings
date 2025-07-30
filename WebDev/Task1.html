@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Landing Page</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Use a font that matches the modern aesthetic */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #111827; /* Dark background for the whole page */
+            color: #F9FAFB;
+        }
+        /* Custom class for the header transition */
+        .header-transition {
+            transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+        /* Styling for the hero section to match the image's vibe */
+        .hero-section {
+            background: linear-gradient(rgba(17, 24, 39, 0.8), rgba(17, 24, 39, 0.8)), url('https://placehold.co/1920x1080/111827/06B6D4?text=Abstract+Background');
+            background-size: cover;
+            background-position: center;
+        }
+        /* Adding a subtle glow effect on hover for nav links */
+        .nav-link-hover {
+            transition: color 0.2s ease, text-shadow 0.2s ease;
+        }
+        .nav-link-hover:hover {
+            color: #06B6D4; /* Teal accent color */
+            text-shadow: 0 0 5px rgba(6, 182, 212, 0.5);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 
+      TASK 01: Interactive Navigation Menu
+      - Fixed position: Achieved with 'fixed' class.
+      - Visible on all pages: Stays at the top as you scroll through sections.
+      - Changes on scroll: JavaScript adds/removes classes to change the background.
+      - Changes on hover: Tailwind's 'hover:' classes are used.
+    -->
+    <header id="main-header" class="fixed top-0 left-0 w-full z-50 header-transition">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-2xl font-bold text-white">SkillCraft</a>
+            
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="#home" class="text-gray-300 nav-link-hover">Home</a>
+                <a href="#about" class="text-gray-300 nav-link-hover">About</a>
+                <a href="#services" class="text-gray-300 nav-link-hover">Services</a>
+                <a href="#contact" class="text-gray-300 nav-link-hover">Contact</a>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <button id="mobile-menu-button" class="md:hidden flex items-center text-white">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                </svg>
+            </button>
+        </nav>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-gray-800/90 backdrop-blur-sm">
+            <a href="#home" class="block py-3 px-6 text-gray-300 hover:bg-gray-700">Home</a>
+            <a href="#about" class="block py-3 px-6 text-gray-300 hover:bg-gray-700">About</a>
+            <a href="#services" class="block py-3 px-6 text-gray-300 hover:bg-gray-700">Services</a>
+            <a href="#contact" class="block py-3 px-6 text-gray-300 hover:bg-gray-700">Contact</a>
+        </div>
+    </header>
+
+    <main>
+        <!-- Home Section (Hero) -->
+        <section id="home" class="min-h-screen flex items-center justify-center hero-section">
+            <div class="text-center">
+                <h1 class="text-5xl md:text-7xl font-bold text-white mb-4">Responsive Landing Page</h1>
+                <p class="text-xl md:text-2xl text-gray-300 mb-8">An interactive experience with a fixed navigation.</p>
+                <a href="#about" class="bg-teal-500 text-white font-bold py-3 px-8 rounded-full hover:bg-teal-600 transition duration-300">Learn More</a>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="min-h-screen flex items-center bg-gray-900 py-20">
+            <div class="container mx-auto px-6 text-center">
+                <h2 class="text-4xl font-bold mb-4">About Us</h2>
+                <p class="max-w-3xl mx-auto text-gray-400">
+                    We are a technology company focused on creating beautiful, functional, and user-friendly web experiences. This landing page is a demonstration of our ability to follow design specifications to create modern and responsive websites. We leverage cutting-edge technologies to bring ideas to life.
+                </p>
+            </div>
+        </section>
+
+        <!-- Services Section -->
+        <section id="services" class="min-h-screen flex items-center bg-gray-800 py-20">
+            <div class="container mx-auto px-6 text-center">
+                <h2 class="text-4xl font-bold mb-12">Our Services</h2>
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="bg-gray-900 p-8 rounded-lg">
+                        <h3 class="text-2xl font-bold mb-4 text-teal-400">Web Design</h3>
+                        <p class="text-gray-400">Crafting visually stunning designs that are intuitive and engaging for your users.</p>
+                    </div>
+                    <div class="bg-gray-900 p-8 rounded-lg">
+                        <h3 class="text-2xl font-bold mb-4 text-teal-400">Web Development</h3>
+                        <p class="text-gray-400">Building robust and scalable websites with clean, efficient code.</p>
+                    </div>
+                    <div class="bg-gray-900 p-8 rounded-lg">
+                        <h3 class="text-2xl font-bold mb-4 text-teal-400">SEO Optimization</h3>
+                        <p class="text-gray-400">Improving your site's visibility on search engines to attract more traffic.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="min-h-screen flex items-center bg-gray-900 py-20">
+            <div class="container mx-auto px-6 text-center">
+                <h2 class="text-4xl font-bold mb-4">Get In Touch</h2>
+                <p class="max-w-2xl mx-auto text-gray-400 mb-8">
+                    Have a project in mind? We'd love to hear from you.
+                </p>
+                <form class="max-w-xl mx-auto">
+                    <div class="mb-4">
+                        <input type="email" placeholder="Your Email" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 text-white">
+                    </div>
+                    <div class="mb-4">
+                        <textarea placeholder="Your Message" rows="4" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 text-white"></textarea>
+                    </div>
+                    <button type="submit" class="bg-teal-500 text-white font-bold py-3 px-8 rounded-full hover:bg-teal-600 transition duration-300">Send Message</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const header = document.getElementById('main-header');
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+
+            // Function to handle header style on scroll
+            const handleScroll = () => {
+                if (window.scrollY > 50) {
+                    // When scrolled, add a background color and shadow
+                    header.classList.add('bg-gray-900/80', 'backdrop-blur-sm', 'shadow-lg');
+                } else {
+                    // When at the top, make it transparent
+                    header.classList.remove('bg-gray-900/80', 'backdrop-blur-sm', 'shadow-lg');
+                }
+            };
+
+            // Function to toggle the mobile menu
+            const toggleMobileMenu = () => {
+                mobileMenu.classList.toggle('hidden');
+            };
+            
+            // Add event listeners
+            window.addEventListener('scroll', handleScroll);
+            mobileMenuButton.addEventListener('click', toggleMobileMenu);
+
+            // Add event listener to each mobile menu link to close the menu on click
+            mobileMenuLinks.forEach(link => {
+                link.addEventListener('click', toggleMobileMenu);
+            });
+        });
+    </script>
+
+</body>
+</html>

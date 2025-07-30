@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do Web App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #111827; /* Dark blue-gray background */
+        }
+        .task-item.completed span {
+            text-decoration: line-through;
+            color: #6B7280; /* Gray-500 */
+        }
+        /* Custom scrollbar for the task list */
+        #task-list::-webkit-scrollbar {
+            width: 8px;
+        }
+        #task-list::-webkit-scrollbar-track {
+            background: #1F2937; /* Gray-800 */
+        }
+        #task-list::-webkit-scrollbar-thumb {
+            background: #4B5563; /* Gray-600 */
+            border-radius: 4px;
+        }
+        #task-list::-webkit-scrollbar-thumb:hover {
+            background: #6B7280; /* Gray-500 */
+        }
+        /* Style for the date and time inputs */
+        input[type="date"], input[type="time"] {
+            color-scheme: dark;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen bg-gray-900 text-white p-4">
+
+    <div class="w-full max-w-2xl mx-auto p-6 md:p-8 bg-gray-800 rounded-2xl shadow-2xl">
+        <!-- App Title -->
+        <div class="flex items-center justify-center gap-4 mb-6">
+            <h1 class="text-3xl md:text-4xl font-bold text-teal-400">To-Do List</h1>
+        </div>
+
+        <!-- Add Task Form -->
+        <form id="add-task-form" class="flex flex-col md:flex-row gap-3 mb-6">
+            <input type="text" id="task-input" placeholder="Add a new task..." class="flex-grow bg-gray-700 border-2 border-gray-600 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-teal-500" required>
+            <input type="date" id="task-date" class="bg-gray-700 border-2 border-gray-600 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-teal-500">
+            <input type="time" id="task-time" class="bg-gray-700 border-2 border-gray-600 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-teal-500">
+            <button type="submit" class="bg-teal-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-teal-700 transition duration-300">Add</button>
+        </form>
+
+        <!-- Task List -->
+        <div id="task-list-container" class="bg-gray-900 rounded-lg p-4">
+            <ul id="task-list" class="space-y-3 max-h-96 overflow-y-auto">
+                <!-- Tasks will be dynamically inserted here -->
+            </ul>
+        </div>
+    </div>
+    
+    <!-- Edit Modal -->
+    <div id="edit-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-gray-800 p-8 rounded-lg shadow-xl w-full max-w-md">
+            <h2 class="text-2xl font-bold mb-4">Edit Task</h2>
+            <form id="edit-task-form">
+                <input type="hidden" id="edit-task-id">
+                <input type="text" id="edit-task-input" class="w-full bg-gray-700 border-2 border-gray-600 rounded-lg px-4 py-3 mb-4 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+                <input type="date" id="edit-task-date" class="w-full bg-gray-700 border-2 border-gray-600 rounded-lg px-4 py-3 mb-4 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <input type="time" id="edit-task-time" class="w-full bg-gray-700 border-2 border-gray-600 rounded-lg px-4 py-3 mb-4 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <div class="flex justify-end gap-4">
+                    <button type="button" id="cancel-edit-button" class="bg-gray-600 font-bold py-2 px-6 rounded-lg hover:bg-gray-700 transition">Cancel</button>
+                    <button type="submit" class="bg-indigo-600 font-bold py-2 px-6 rounded-lg hover:bg-indigo-700 transition">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // DOM Elements
+            const addTaskForm = document.getElementById('add-task-form');
+            const taskInput = document.getElementById('task-input');
+            const taskDateInput = document.getElementById('task-date');
+            const taskTimeInput = document.getElementById('task-time');
+            const taskList = document.getElementById('task-list');
+            
+            const editModal = document.getElementById('edit-modal');
+            const editTaskForm = document.getElementById('edit-task-form');
+            const editTaskIdInput = document.getElementById('edit-task-id');
+            const editTaskInput = document.getElementById('edit-task-input');
+            const editTaskDateInput = document.getElementById('edit-task-date');
+            const editTaskTimeInput = document.getElementById('edit-task-time');
+            const cancelEditButton = document.getElementById('cancel-edit-button');
+
+            // App State
+            let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+
+            // --- Core Functions ---
+
+            const saveTasks = () => {
+                localStorage.setItem('tasks', JSON.stringify(tasks));
+            };
+
+            const renderTasks = () => {
+                taskList.innerHTML = '';
+                if (tasks.length === 0) {
+                    taskList.innerHTML = `<p class="text-gray-500 text-center py-4">No tasks yet. Add one above!</p>`;
+                    return;
+                }
+
+                tasks.forEach(task => {
+                    const taskElement = document.createElement('li');
+                    taskElement.className = `task-item flex items-center justify-between bg-gray-800 p-4 rounded-lg ${task.completed ? 'completed' : ''}`;
+                    taskElement.dataset.id = task.id;
+
+                    let dateTimeString = '';
+                    if (task.date) {
+                        const date = new Date(task.date + 'T00:00:00');
+                        dateTimeString += date.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
+                    }
+                    if (task.time) {
+                        const [hours, minutes] = task.time.split(':');
+                        const time = new Date();
+                        time.setHours(hours, minutes);
+                        dateTimeString += ` at ${time.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+                    }
+
+                    taskElement.innerHTML = `
+                        <div class="flex items-center gap-4">
+                            <input type="checkbox" class="h-5 w-5 rounded bg-gray-700 border-gray-600 text-teal-500 focus:ring-teal-500" ${task.completed ? 'checked' : ''}>
+                            <div>
+                                <span class="font-semibold text-lg">${task.text}</span>
+                                ${dateTimeString ? `<p class="text-sm text-gray-400">${dateTimeString}</p>` : ''}
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button class="edit-btn text-gray-400 hover:text-indigo-400 transition">Edit</button>
+                            <button class="delete-btn text-gray-400 hover:text-red-400 transition">Delete</button>
+                        </div>
+                    `;
+                    taskList.appendChild(taskElement);
+                });
+            };
+
+            const addTask = (e) => {
+                e.preventDefault();
+                const text = taskInput.value.trim();
+                const date = taskDateInput.value;
+                const time = taskTimeInput.value;
+
+                if (text === '') return;
+
+                const newTask = {
+                    id: Date.now(),
+                    text,
+                    date,
+                    time,
+                    completed: false
+                };
+
+                tasks.push(newTask);
+                saveTasks();
+                renderTasks();
+                addTaskForm.reset();
+            };
+            
+            const handleTaskListClick = (e) => {
+                const target = e.target;
+                const taskElement = target.closest('.task-item');
+                if (!taskElement) return;
+                
+                const taskId = Number(taskElement.dataset.id);
+
+                // Toggle complete
+                if (target.type === 'checkbox') {
+                    const task = tasks.find(t => t.id === taskId);
+                    task.completed = target.checked;
+                    saveTasks();
+                    renderTasks();
+                }
+
+                // Delete task
+                if (target.classList.contains('delete-btn')) {
+                    tasks = tasks.filter(t => t.id !== taskId);
+                    saveTasks();
+                    renderTasks();
+                }
+
+                // Edit task
+                if (target.classList.contains('edit-btn')) {
+                    openEditModal(taskId);
+                }
+            };
+
+            const openEditModal = (taskId) => {
+                const task = tasks.find(t => t.id === taskId);
+                editTaskIdInput.value = task.id;
+                editTaskInput.value = task.text;
+                editTaskDateInput.value = task.date || '';
+                editTaskTimeInput.value = task.time || '';
+                editModal.classList.remove('hidden');
+            };
+            
+            const closeEditModal = () => {
+                editModal.classList.add('hidden');
+                editTaskForm.reset();
+            };
+
+            const saveEditedTask = (e) => {
+                e.preventDefault();
+                const taskId = Number(editTaskIdInput.value);
+                const newText = editTaskInput.value.trim();
+                const newDate = editTaskDateInput.value;
+                const newTime = editTaskTimeInput.value;
+                
+                if (newText === '') return;
+
+                const task = tasks.find(t => t.id === taskId);
+                task.text = newText;
+                task.date = newDate;
+                task.time = newTime;
+
+                saveTasks();
+                renderTasks();
+                closeEditModal();
+            };
+
+            // --- Event Listeners ---
+            addTaskForm.addEventListener('submit', addTask);
+            taskList.addEventListener('click', handleTaskListClick);
+            editTaskForm.addEventListener('submit', saveEditedTask);
+            cancelEditButton.addEventListener('click', closeEditModal);
+            
+            // Close modal on outside click
+            editModal.addEventListener('click', (e) => {
+                if (e.target === editModal) {
+                    closeEditModal();
+                }
+            });
+
+            // Initial Render
+            renderTasks();
+        });
+    </script>
+</body>
+</html>
