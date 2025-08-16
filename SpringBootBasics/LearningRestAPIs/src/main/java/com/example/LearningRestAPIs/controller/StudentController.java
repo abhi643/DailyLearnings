@@ -3,6 +3,7 @@ package com.example.LearningRestAPIs.controller;
 import com.example.LearningRestAPIs.dto.AddStudentRequestDto;
 import com.example.LearningRestAPIs.dto.StudentDto;
 import com.example.LearningRestAPIs.service.StudentService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +32,7 @@ public class StudentController {
     }
 
     @PostMapping
-    public ResponseEntity<StudentDto> createStudent(@RequestBody AddStudentRequestDto addStudentRequestDto){
+    public ResponseEntity<StudentDto> createStudent(@RequestBody @Valid AddStudentRequestDto addStudentRequestDto){
         return ResponseEntity.status(HttpStatus.CREATED).body(studentService.addStudent(addStudentRequestDto));
     }
 
@@ -42,7 +43,7 @@ public class StudentController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<StudentDto> updateStudent(@PathVariable long id, @RequestBody AddStudentRequestDto addStudentRequestDto) {
+    public ResponseEntity<StudentDto> updateStudent(@PathVariable long id, @RequestBody @Valid AddStudentRequestDto addStudentRequestDto) {
         return ResponseEntity.ok(studentService.updateStudent(id, addStudentRequestDto));
     }
 
