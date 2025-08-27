@@ -5,7 +5,6 @@ public class AnagramCheck {
         for (int i = 0; i < s.length(); i++) {
             count[s.charAt(i) - 'a']++;
             count[t.charAt(i) - 'a']--;
-            System.out.println(count[s.charAt(i) - 'a'] + " " + count[t.charAt(i) - 'a']);
         }
         for (int c : count) {
             if (c != 0) return false;
@@ -15,7 +14,7 @@ public class AnagramCheck {
 
     public static void main(String[] args) {
         AnagramCheck solution = new AnagramCheck();
-        String s = "listen", t = "silent";
+        String s = "a", t = "b";
         System.out.println(solution.isAnagram(s, t));
     }
 }
